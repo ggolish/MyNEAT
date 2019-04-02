@@ -7,7 +7,11 @@
 // This namespace contains all utility functions involving random numbers
 namespace neat_random {
   // Variables for generating numbers from a uniform distribution
-  static std::mt19937 generator(time(NULL));
+  static std::random_device rd1;
+  static std::random_device rd2;
+  // Use nondeterministic random numbers as seed if possible
+  static unsigned int seed = (rd1() == rd2()) ? time(NULL) : rd1();
+  static std::mt19937 generator(seed);
   static std::uniform_real_distribution<double> *dist = NULL;
   static double curr_min, curr_max;
   
