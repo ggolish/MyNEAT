@@ -8,13 +8,17 @@
 
 class Genome {
  public:
-  std::vector<Connection> connections;
-  std::vector<Node> nodes;
+  std::vector<Connection *> connections;
+  std::vector<Node *> nodes;
   std::vector<Node *> input_nodes;
   std::vector<Node *> output_nodes;
 
   // Constructor, creates fully connected network, no hidden layer
   Genome(int ninputs, int noutputs);
+
+  // Feeds a list of inputs forward through the network and returns
+  // the result
+  std::vector<double> feed_forward(const std::vector<double> &inputs);
 };
 
 #endif
