@@ -13,6 +13,7 @@ OBJS = \
        src/Node.cpp \
        src/utilities.cpp \
        src/NEAT.cpp \
+       src/InnovationMap.cpp
 
 TARGET = test
 
@@ -35,6 +36,8 @@ Genome.o: src/Genome.cpp include/Genome.h
 Connection.o: src/Connection.cpp include/Connection.h include/utilities.h include/options.h include/Node.h
 
 Node.o: src/Node.cpp include/Node.h include/Connection.h
+
+InnovationMap.o: src/InnovationMap.cpp include/InnovationMap.h
 
 clean:
 	rm -f main.o
