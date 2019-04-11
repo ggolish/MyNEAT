@@ -2,19 +2,12 @@
 #include <vector>
 
 #include "NEAT.h"
+#include "utilities.h"
 
 int main()
 {
   NEAT neat(3, 2, 1);
-  std::vector<double> inputs{ 1, 1 };
-  auto output_list = neat.feed_forward_all(inputs);
-  int i = 0;
-  for(auto outputs = output_list.begin(); outputs != output_list.end(); ++outputs) {
-    std::cout << "Genome " << i++ << std::endl;
-    for(auto output = outputs->begin(); output != outputs->end(); ++output) {
-      std::cout << "  - " << (*output) << std::endl;
-    }
-    std::cout << std::endl;
-  }
+  neat_mutate::add_node(neat.population[0], neat.node_innov, neat.conn_innov);
+  std::cout << *neat.population[0] << std::endl;
   return 0;
 }

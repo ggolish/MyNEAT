@@ -1,6 +1,7 @@
 #ifndef NEAT_GENOME_H_
 #define NEAT_GENOME_H_
 
+#include <iostream>
 #include <vector>
 
 #include "Node.h"
@@ -19,6 +20,8 @@ class Genome {
   // Feeds a list of inputs forward through the network and returns
   // the result
   std::vector<double> feed_forward(const std::vector<double> &inputs);
+  // Outputs a genome, for debugging purposes
+  friend std::ostream &operator<<(std::ostream &os, const Genome &g);
 };
 
 #endif

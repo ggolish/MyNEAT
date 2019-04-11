@@ -10,7 +10,7 @@ NEAT::NEAT(unsigned int population_size, int ninputs, int noutputs) :
     population.push_back(new Genome(ninputs, noutputs));
 
   node_innov = new InnovationMap(ninputs + noutputs + 1);
-  conn_innov = new InnovationMap(ninputs * noutputs + 1);
+  conn_innov = new InnovationMap(ninputs * noutputs);
 }
 
 // Feeds inputs to a single network and returns outputs

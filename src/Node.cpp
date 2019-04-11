@@ -36,7 +36,7 @@ std::string Node::get_type() const
 
 std::ostream &operator<<(std::ostream &os, const Node &node)
 {
-  os << "<Node type='" << node.get_type() << "' ";
+  os << "<Node " << &node << " type='" << node.get_type() << "' ";
   os << "innov=" << node.innovation_number << " ";
   os << "value=" << node.value << " ";
   os << "in_connections={";
@@ -50,7 +50,7 @@ std::ostream &operator<<(std::ostream &os, const Node &node)
     os << (*conn);
     if(conn != node.out_connections.end() - 1) os << ",";
   }
-  os << "} ";
+  os << "}";
   os << ">";
   return os;
 }

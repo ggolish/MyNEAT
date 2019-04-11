@@ -1,7 +1,5 @@
 
-#include <iostream>
 #include <cstdio>
-#include <vector>
 
 #include "Genome.h"
 #include "utilities.h"
@@ -58,4 +56,21 @@ std::vector<double> Genome::feed_forward(const std::vector<double> &inputs)
   }
 
   return outputs;
+}
+
+std::ostream &operator<<(std::ostream &os, const Genome &g)
+{
+    os << "<Genome " << &g << " nodes={" << std::endl;
+    for(auto n = g.nodes.begin(); n != g.nodes.end(); ++n) {
+        os << "  " << *(*n) << std::endl;
+    }
+
+    os << "} connections={" << std::endl;
+    for(auto conn = g.connections.begin(); conn != g.connections.end(); ++conn) {
+        os << "  " << *(*conn) << std::endl;
+    }
+
+    os << "}>";
+
+    return os;
 }
