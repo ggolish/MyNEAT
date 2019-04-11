@@ -22,7 +22,7 @@ namespace neat_math {
 
 namespace neat_mutate {
   void add_node(Genome *g, InnovationMap *node_map, InnovationMap *conn_map);
-  void add_connection(Genome *g, InnovationMap *node_map, InnovationMap *conn_map);
+  void add_connection(Genome *g, InnovationMap *conn_map);
   void perturb_connections(Genome *g);
   void replace_connection(Genome *g);
   void toggle_connection(Genome *g);

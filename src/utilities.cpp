@@ -110,8 +110,27 @@ namespace neat_mutate {
   }
 
   // Mutates a genome by adding a new connection
-  void add_connection(Genome *g, InnovationMap *node_map, InnovationMap *conn_map)
+  void add_connection(Genome *g, InnovationMap *conn_map)
   {
+      int i = neat_random::randint(0, g->nodes.size() - 1);
+      int j = neat_random::randint(0, g->nodes.size() - 1);
+
+      Node *from_node = g->nodes[i];
+      Node *to_node = g->nodes[j];
+
+      // Check if the connection is valid
+      if(from_node->type == NodeType::OUTPUT || to_node->type == NodeType::INPUT || to_node->type == NodeType::BIAS)
+          return;
+
+      // Check if connection exists
+      for(auto c = from_node->out_connections.begin(); c != from_node->out_connections.end(); ++c) {
+        if((*c)->to_node == to_node) return;
+      }
+
+      // Create new connection and append
+      int innov = conn_map->get_innovation(from_node->innovation_number, to_node->innovation_number);
+      Connection *new_conn = new Connection(from_node, to_node, innov);
+      g->connections.push_back(new_conn);
   }
 
   // Mutates a genome by perturbing its connection weights
