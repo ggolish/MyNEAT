@@ -4,6 +4,7 @@
 #include <iostream>
 
 class Node;
+class Genome;
 
 // Represents a weighted connection between two nodes of a network
 class Connection {
@@ -17,6 +18,8 @@ class Connection {
   Connection(Node *fnode, Node *tnode, int innov);
   // Constructor, weight is assigned
   Connection(Node *fnode, Node *tnode, int innov, double weight);
+  // Returns a copy of this in relation to a new genome
+  Connection *copy(Genome *new_g);
   // Outputs a connection, for debugging purposes
   friend std::ostream &operator<<(std::ostream &os, const Connection &conn);
 };

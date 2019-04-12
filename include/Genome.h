@@ -13,9 +13,12 @@ class Genome {
   std::vector<Node *> nodes;
   std::vector<Node *> input_nodes;
   std::vector<Node *> output_nodes;
+  double fitness;
 
   // Constructor, creates fully connected network, no hidden layer
   Genome(int ninputs, int noutputs);
+  // Constructor, empty genome
+  Genome();
 
   // Feeds a list of inputs forward through the network and returns
   // the result

@@ -1,6 +1,7 @@
 
 #include "Connection.h"
 #include "Node.h"
+#include "Genome.h"
 #include "utilities.h"
 #include "options.h"
 
@@ -25,6 +26,20 @@ Connection::Connection(Node *fnode, Node *tnode, int innov, double weight) :
   // Ensure each nodes' connection pointers are correct
   from_node->out_connections.push_back(this);
   to_node->in_connections.push_back(this);
+}
+
+Connection *Connection::copy(Genome *new_g)
+{
+  Node *new_from, *new_to;
+  for(auto n = new_g->nodes.begin(); n != new_g->nodes.end(); ++n) {
+    if((*n)->innovation_number == from_node->innovation_number)
+      new_from = (*n);
+    if((*n)->innovation_number == to_node->innovation_number)
+      new_to = (*n);
+  }
+  Connection *c = new Connection(new_from, new_to, innovation_number, weight);
+  c->disabled = disabled;
+  return c;
 }
 
 std::ostream &operator<<(std::ostream &os, const Connection &conn)

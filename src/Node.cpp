@@ -34,6 +34,11 @@ std::string Node::get_type() const
   return std::string("INVALID");
 }
 
+Node *Node::copy()
+{
+  return new Node(innovation_number, type);
+}
+
 std::ostream &operator<<(std::ostream &os, const Node &node)
 {
   os << "<Node " << &node << " type='" << node.get_type() << "' ";

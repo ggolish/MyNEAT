@@ -14,18 +14,24 @@ namespace neat_random {
 
 namespace neat_node {
   double calculate_output(Node *node);
+  bool compare(Node *n1, Node *n2);
+}
+
+namespace neat_connection {
+  bool compare(Connection *c1, Connection *c2);
 }
 
 namespace neat_math {
   double activate(double x);
 }
 
-namespace neat_mutate {
+namespace neat_genetics {
   void add_node(Genome *g, InnovationMap *node_map, InnovationMap *conn_map);
   void add_connection(Genome *g, InnovationMap *conn_map);
-  void perturb_connections(Genome *g);
+  void perturb_connection(Genome *g);
   void replace_connection(Genome *g);
   void toggle_connection(Genome *g);
+  Genome *crossover(Genome *g1, Genome *g2);
 }
 
 #endif

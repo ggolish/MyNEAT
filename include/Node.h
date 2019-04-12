@@ -21,6 +21,8 @@ class Node {
   Node(int innov, NodeType type);
   // Returns the type of the node as a string
   std::string get_type() const;
+  // Returns a copy of this
+  Node *copy();
   // Overload for output operator
   friend std::ostream &operator<<(std::ostream &os, const Node &node);
 };

@@ -4,7 +4,8 @@
 #include "Genome.h"
 #include "utilities.h"
 
-Genome::Genome(int ninputs, int noutputs)
+Genome::Genome(int ninputs, int noutputs) :
+  fitness(0.0)
 {
   // Create the nodes for the network
   int n = ninputs + noutputs;
@@ -32,6 +33,10 @@ Genome::Genome(int ninputs, int noutputs)
     }
   }
 
+}
+
+Genome::Genome() : fitness(0.0)
+{
 }
 
 std::vector<double> Genome::feed_forward(const std::vector<double> &inputs)

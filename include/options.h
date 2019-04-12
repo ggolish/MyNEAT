@@ -6,9 +6,11 @@
 namespace neat_options {
 
   // The minimum and maximum possible weights for a connection
-  double MIN_CONNECTION_WEIGHT = -2.0;
-  double MAX_CONNECTION_WEIGHT = 2.0;
+  extern double MIN_CONNECTION_WEIGHT;
+  extern double MAX_CONNECTION_WEIGHT;
 
+  // The maximum percentage a connection weight can be perturbed by
+  extern double PERTURB_MAX;
 }
 
 #endif

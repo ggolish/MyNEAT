@@ -1,9 +1,11 @@
 
+#include <algorithm>
 #include <random>
 #include <ctime>
 #include <cmath>
 
 #include "utilities.h"
+#include "options.h"
 
 // This namespace contains all utility functions involving random numbers
 namespace neat_random {
@@ -71,6 +73,20 @@ namespace neat_node {
     return neat_math::activate(sum);
   }
 
+  bool compare(Node *n1, Node *n2) 
+  {
+    return (n1->innovation_number < n2->innovation_number);
+  }
+
+}
+
+namespace neat_connection {
+
+  bool compare(Connection *c1, Connection *c2)
+  {
+    return (c1->innovation_number < c2->innovation_number);
+  }
+
 }
 
 namespace neat_math {
@@ -82,7 +98,7 @@ namespace neat_math {
 
 }
 
-namespace neat_mutate {
+namespace neat_genetics {
   
   // Mutates a genome by adding a new node
   void add_node(Genome *g, InnovationMap *node_map, InnovationMap *conn_map)
@@ -112,40 +128,110 @@ namespace neat_mutate {
   // Mutates a genome by adding a new connection
   void add_connection(Genome *g, InnovationMap *conn_map)
   {
-      int i = neat_random::randint(0, g->nodes.size() - 1);
-      int j = neat_random::randint(0, g->nodes.size() - 1);
+    int i = neat_random::randint(0, g->nodes.size() - 1);
+    int j = neat_random::randint(0, g->nodes.size() - 1);
 
-      Node *from_node = g->nodes[i];
-      Node *to_node = g->nodes[j];
+    Node *from_node = g->nodes[i];
+    Node *to_node = g->nodes[j];
 
-      // Check if the connection is valid
-      if(from_node->type == NodeType::OUTPUT || to_node->type == NodeType::INPUT || to_node->type == NodeType::BIAS)
-          return;
+    // Check if the connection is valid
+    if(from_node->type == NodeType::OUTPUT || to_node->type == NodeType::INPUT || to_node->type == NodeType::BIAS)
+      return;
 
-      // Check if connection exists
-      for(auto c = from_node->out_connections.begin(); c != from_node->out_connections.end(); ++c) {
-        if((*c)->to_node == to_node) return;
-      }
+    // Check if connection exists
+    for(auto c = from_node->out_connections.begin(); c != from_node->out_connections.end(); ++c) {
+      if((*c)->to_node == to_node) return;
+    }
 
-      // Create new connection and append
-      int innov = conn_map->get_innovation(from_node->innovation_number, to_node->innovation_number);
-      Connection *new_conn = new Connection(from_node, to_node, innov);
-      g->connections.push_back(new_conn);
+    // Create new connection and append
+    int innov = conn_map->get_innovation(from_node->innovation_number, to_node->innovation_number);
+    Connection *new_conn = new Connection(from_node, to_node, innov);
+    g->connections.push_back(new_conn);
   }
 
   // Mutates a genome by perturbing its connection weights
-  void perturb_connections(Genome *g)
+  void perturb_connection(Genome *g)
   {
+    int i = neat_random::randint(0, g->connections.size() - 1);
+    Connection *c = g->connections[i];
+    double delta = c->weight * neat_random::uniform(-neat_options::PERTURB_MAX, neat_options::PERTURB_MAX);
+    c->weight += delta;
   }
 
   // Mutates a genome by replacing a connection weight with a random value
   void replace_connection(Genome *g)
   {
+    int i = neat_random::randint(0, g->connections.size() - 1);
+    Connection *c = g->connections[i];
+    c->weight = neat_random::uniform(neat_options::MIN_CONNECTION_WEIGHT, neat_options::MAX_CONNECTION_WEIGHT);
   }
 
   // Mutates a genome by turning a connection on or off
   void toggle_connection(Genome *g)
   {
+    int i = neat_random::randint(0, g->connections.size() - 1);
+    Connection *c = g->connections[i];
+    c->disabled = !c->disabled;
   }
-  
+
+  // Sexual reproduction of two genomes
+  Genome *crossover(Genome *g1, Genome *g2)
+  {
+    Genome *best_fit, *least_fit;
+    Genome *baby = new Genome();
+
+    // Determine the best fit parent
+    if(g1->fitness > g2->fitness) {
+      best_fit = g1;
+      least_fit = g2;
+    } else {
+      best_fit = g2;
+      least_fit = g1;
+    }
+
+    // Ensure nodes and connections are sorted by innovation number
+    std::sort(g1->connections.begin(), g1->connections.end(), neat_connection::compare);
+    std::sort(g2->connections.begin(), g2->connections.end(), neat_connection::compare);
+    std::sort(g1->nodes.begin(), g1->nodes.end(), neat_node::compare);
+    std::sort(g2->nodes.begin(), g2->nodes.end(), neat_node::compare);
+
+    // The child inherits all nodes from the best fit parent
+    for(auto n = best_fit->nodes.begin(); n != best_fit->nodes.end(); ++n) {
+      baby->nodes.push_back((*n)->copy());
+    }
+
+    // Loop through all connections in both parents, disjoint and excess are inherited from
+    // more fit parent, all others chosen randomly
+    auto c1 = best_fit->connections.begin();
+    auto c2 = least_fit->connections.begin();
+    while(c1 != best_fit->connections.end() && c2 != least_fit->connections.end()) {
+      int innov1 = (*c1)->innovation_number;
+      int innov2 = (*c2)->innovation_number;
+      if(innov1 == innov2) {
+        // Randomly choose which gene to inherit from
+        double prob = neat_random::uniform(0, 1);
+        Connection *new_conn = (prob < 0.5) ? (*c1)->copy(baby) : (*c2)->copy(baby);
+        baby->connections.push_back(new_conn);
+        c1++;
+        c2++;
+      } else if(innov1 < innov2) {
+        // Add disjoint genes from best fit parent
+        baby->connections.push_back((*c1)->copy(baby));
+        c1++; 
+      } else {
+        // Disjoint genes from least_fit parent are ignored
+        c2++;
+      }
+    }
+
+    // Ensure all excess genes from best fit parent are added
+    while(c1 != best_fit->connections.end()) {
+      baby->connections.push_back((*c1)->copy(baby));
+      c1++; 
+    }
+
+    return baby;
+  }
+
 }
+
