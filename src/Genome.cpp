@@ -54,7 +54,7 @@ std::vector<double> Genome::feed_forward(const std::vector<double> &inputs)
   for(auto n = nodes.begin(); n != nodes.end(); ++n) {
     if((*n)->type == NodeType::INPUT) {
       (*n)->value = inputs[input_count++];
-    } else {
+    } else if((*n)->type != NodeType::BIAS) {
       (*n)->value = 0.0;
     }
   }
@@ -67,10 +67,8 @@ std::vector<double> Genome::feed_forward(const std::vector<double> &inputs)
     std::vector<Node *>::const_iterator n;
     for(n = output_nodes.cbegin(); n != output_nodes.cend(); ++n) {
       double output = neat_node::calculate_output((*n));
-      std::cout << output << ", ";
       outputs.push_back(output);
     }
-    std::cout << std::endl;
   }
 
   return outputs;

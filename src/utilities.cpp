@@ -68,12 +68,14 @@ namespace neat_node {
     std::vector<Connection *>::iterator conn;
     for(conn = node->in_connections.begin(); conn != node->in_connections.end(); ++conn) {
       if((*conn)->from_node->visited == false) 
-        (*conn)->from_node->value = calculate_output((*conn)->from_node);
-      sum += (*conn)->from_node->value * (*conn)->weight;
+        sum += calculate_output((*conn)->from_node);
+      else
+        sum += (*conn)->from_node->value * (*conn)->weight;
     }
 
     // Activate the value and return
-    return neat_math::activate(sum);
+    node->value = neat_math::activate(sum);
+    return node->value;
   }
 
   bool compare(Node *n1, Node *n2) 
