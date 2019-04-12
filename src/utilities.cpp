@@ -54,6 +54,8 @@ namespace neat_node {
   double calculate_output(Node *node)
   {
 
+    node->visited = true;
+
     // Base case, all nodes should lead to an input or bias node
     // The network cannot contain any loops
     if(node->type == NodeType::INPUT || node->type == NodeType::BIAS) {
@@ -65,8 +67,9 @@ namespace neat_node {
     double sum = 0.0;
     std::vector<Connection *>::iterator conn;
     for(conn = node->in_connections.begin(); conn != node->in_connections.end(); ++conn) {
-      double v = calculate_output((*conn)->from_node);
-      sum += v * (*conn)->weight;
+      if((*conn)->from_node->visited == false) 
+        (*conn)->from_node->value = calculate_output((*conn)->from_node);
+      sum += (*conn)->from_node->value * (*conn)->weight;
     }
 
     // Activate the value and return

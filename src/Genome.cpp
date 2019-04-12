@@ -3,6 +3,7 @@
 
 #include "Genome.h"
 #include "utilities.h"
+#include "options.h"
 
 Genome::Genome(int ninputs, int noutputs) :
   fitness(0.0)
@@ -49,15 +50,27 @@ std::vector<double> Genome::feed_forward(const std::vector<double> &inputs)
   }
   
   // Set the values of the input nodes
-  for(unsigned int i = 0; i < input_nodes.size(); ++i) {
-    input_nodes[i]->value = inputs[i];
+  int input_count = 0;
+  for(auto n = nodes.begin(); n != nodes.end(); ++n) {
+    if((*n)->type == NodeType::INPUT) {
+      (*n)->value = inputs[input_count++];
+    } else {
+      (*n)->value = 0.0;
+    }
   }
 
   // Perform a depth first search from output nodes to calculate values
-  std::vector<Node *>::const_iterator n;
-  for(n = output_nodes.cbegin(); n != output_nodes.cend(); ++n) {
-    double output = neat_node::calculate_output((*n));
-    outputs.push_back(output);
+  for(int i = 0; i < neat_options::NOUTPUT_CALCS; ++i) {
+    outputs.clear();
+    for(auto n = nodes.begin(); n != nodes.end(); ++n) 
+      (*n)->visited = false;
+    std::vector<Node *>::const_iterator n;
+    for(n = output_nodes.cbegin(); n != output_nodes.cend(); ++n) {
+      double output = neat_node::calculate_output((*n));
+      std::cout << output << ", ";
+      outputs.push_back(output);
+    }
+    std::cout << std::endl;
   }
 
   return outputs;

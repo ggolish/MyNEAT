@@ -9,4 +9,6 @@ namespace neat_options {
 
   // The maximum percentage a connection weight can be perturbed by
   double PERTURB_MAX = 0.5;
+
+  int NOUTPUT_CALCS = 5;
 }

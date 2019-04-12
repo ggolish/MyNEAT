@@ -11,6 +11,10 @@ namespace neat_options {
 
   // The maximum percentage a connection weight can be perturbed by
   extern double PERTURB_MAX;
+
+  // The number of time to calculate the outputs for a network, to account
+  // for recurrent connections
+  extern int NOUTPUT_CALCS;
 }
 
 #endif

@@ -6,7 +6,7 @@
 #include "Connection.h"
 
 Node::Node(int innov, NodeType type) :
-  innovation_number(innov), type(type)
+  innovation_number(innov), type(type), visited(false)
 {
   // A bias node will always have a value of 1
   if(type == NodeType::BIAS) {

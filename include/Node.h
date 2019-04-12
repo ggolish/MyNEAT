@@ -16,6 +16,7 @@ class Node {
   int innovation_number;                                     // Historical marker
   NodeType type;                                             // Denotes what type of Node this is
   double value;                                              // The value that will be fed forward
+  bool visited;                                              // Whether or not node has been visited during output calc
 
   // Constructor, sets the innovation number
   Node(int innov, NodeType type);
