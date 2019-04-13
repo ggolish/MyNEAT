@@ -15,6 +15,12 @@ namespace neat_options {
   // The number of time to calculate the outputs for a network, to account
   // for recurrent connections
   extern int NOUTPUT_CALCS;
+
+  // Constants for distance function
+  extern double EXCESS_CONSTANT;
+  extern double DISJOINT_CONSTANT;
+  extern double WEIGHTDIFF_CONSTANT;
+  extern double DISTANCE_THRESHOLD;
 }
 
 #endif
