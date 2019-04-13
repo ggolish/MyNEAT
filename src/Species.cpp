@@ -10,6 +10,13 @@ Species::Species() : fitness(0.0), portion(0.0)
 {
 }
 
+Species::~Species()
+{
+  for(auto g = population.begin(); g != population.end(); g++) {
+    delete (*g);
+  }
+}
+
 void Species::append(Genome *g)
 {
   population.push_back(g);

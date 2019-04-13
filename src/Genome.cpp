@@ -40,6 +40,16 @@ Genome::Genome() : fitness(0.0)
 {
 }
 
+Genome::~Genome()
+{
+  for(auto n = nodes.begin(); n != nodes.end(); ++n) {
+    delete (*n);
+  }
+  for(auto n = connections.begin(); n != connections.end(); ++n) {
+    delete (*n);
+  }
+}
+
 Genome *Genome::copy()
 {
   Genome *new_g = new Genome();

@@ -107,8 +107,6 @@ void NEAT::repopulate(const std::vector<double> &fitnesses)
       // Mutations / Crossover will happen here
       population.push_back(g);
     }
-    // The old genomes can be destroyed here
+    delete (*s);
   }
-
-  // The species objects can be destroyed here
 }

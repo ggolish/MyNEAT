@@ -16,6 +16,7 @@ class Species
     double portion;
 
     Species();
+    ~Species();
     void append(Genome *g);
     double distance(Genome *g);
     double get_fitness() const;

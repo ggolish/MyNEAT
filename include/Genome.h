@@ -19,6 +19,8 @@ class Genome {
   Genome(int ninputs, int noutputs);
   // Constructor, empty genome
   Genome();
+  // Destructor, ensures all nodes and connections are destroyed
+  ~Genome();
   // Makes an entirely new copy and returns it
   Genome *copy();
 
