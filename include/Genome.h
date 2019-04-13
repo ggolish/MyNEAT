@@ -19,6 +19,8 @@ class Genome {
   Genome(int ninputs, int noutputs);
   // Constructor, empty genome
   Genome();
+  // Makes an entirely new copy and returns it
+  Genome *copy();
 
   // Feeds a list of inputs forward through the network and returns
   // the result

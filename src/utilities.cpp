@@ -202,7 +202,10 @@ namespace neat_genetics {
 
     // The child inherits all nodes from the best fit parent
     for(auto n = best_fit->nodes.begin(); n != best_fit->nodes.end(); ++n) {
-      baby->nodes.push_back((*n)->copy());
+      Node *new_node = (*n)->copy();
+      if((*n)->type == NodeType::INPUT) baby->input_nodes.push_back(new_node);
+      else if((*n)->type == NodeType::OUTPUT) baby->output_nodes.push_back(new_node);
+      baby->nodes.push_back(new_node);
     }
 
     // Loop through all connections in both parents, disjoint and excess are inherited from

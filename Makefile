@@ -14,7 +14,8 @@ OBJS = \
        src/utilities.cpp \
        src/NEAT.cpp \
        src/InnovationMap.cpp \
-       src/options.cpp
+       src/options.cpp \
+       src/Species.cpp
 
 TARGET = test
 
@@ -41,6 +42,8 @@ Node.o: src/Node.cpp include/Node.h include/Connection.h
 InnovationMap.o: src/InnovationMap.cpp include/InnovationMap.h
 
 options.o: src/options.cpp include/options.h
+
+Species.o: src/Species.cpp include/Species.h
 
 clean:
 	rm -f main.o

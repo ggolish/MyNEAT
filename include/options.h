@@ -21,6 +21,9 @@ namespace neat_options {
   extern double DISJOINT_CONSTANT;
   extern double WEIGHTDIFF_CONSTANT;
   extern double DISTANCE_THRESHOLD;
+
+  // Determines the number of rounds to run a species tournament
+  extern int TOURNAMENT_ROUNDS;
 }
 
 #endif

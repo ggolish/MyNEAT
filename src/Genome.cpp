@@ -40,6 +40,21 @@ Genome::Genome() : fitness(0.0)
 {
 }
 
+Genome *Genome::copy()
+{
+  Genome *new_g = new Genome();
+  for(auto n = nodes.begin(); n != nodes.end(); ++n) {
+    Node *new_node = (*n)->copy();
+    if((*n)->type == NodeType::INPUT) new_g->input_nodes.push_back(new_node);
+    else if((*n)->type == NodeType::OUTPUT) new_g->output_nodes.push_back(new_node);
+    new_g->nodes.push_back(new_node);
+  }
+  for(auto c = connections.begin(); c != connections.end(); ++c) {
+    new_g->connections.push_back((*c)->copy(new_g));
+  }
+  return new_g;
+}
+
 std::vector<double> Genome::feed_forward(const std::vector<double> &inputs)
 {
   std::vector<double> outputs;
