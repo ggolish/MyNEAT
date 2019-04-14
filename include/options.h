@@ -24,6 +24,14 @@ namespace neat_options {
 
   // Determines the number of rounds to run a species tournament
   extern int TOURNAMENT_ROUNDS;
+
+  // Repopulation rates
+  extern double MUTATION_RATE;
+  extern double CONNECTION_MUTATION_RATE;
+  extern double PERTURB_MUTATION_RATE;
+  extern double TOGGLE_MUTATION_RATE;
+  extern double ADDNODE_MUTATION_RATE;
+  extern double ADDCONN_MUTATION_RATE;
 }
 
 #endif

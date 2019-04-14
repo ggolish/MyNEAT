@@ -14,6 +14,7 @@ class Species
   public:
     std::vector<Genome *> population;
     double portion;
+    Genome *champion;
 
     Species();
     ~Species();

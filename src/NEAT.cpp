@@ -1,8 +1,10 @@
 
+#include <algorithm>
 #include <cstdio>
 #include <cmath>
 
 #include "NEAT.h"
+#include "utilities.h"
 #include "options.h"
 
 NEAT::NEAT(unsigned int population_size, int ninputs, int noutputs) :
@@ -12,7 +14,7 @@ NEAT::NEAT(unsigned int population_size, int ninputs, int noutputs) :
     population.push_back(new Genome(ninputs, noutputs));
 
   node_innov = new InnovationMap(ninputs + noutputs + 1);
-  conn_innov = new InnovationMap(ninputs * noutputs);
+  conn_innov = new InnovationMap(ninputs * noutputs + noutputs + 1);
 }
 
 // Feeds inputs to a single network and returns outputs
@@ -54,6 +56,7 @@ std::vector<Species *> NEAT::speciate()
       if(distance < neat_options::DISTANCE_THRESHOLD) {
         (*s)->append((*g));
         new_species = false;
+        break;
       }
     }
     if(new_species == true) {
@@ -101,12 +104,58 @@ void NEAT::repopulate(const std::vector<double> &fitnesses)
 
   // Repopulate using the species
   for(auto s = species_list.begin(); s != species_list.end(); ++s) {
-    std::cout << *(*s) << std::endl;
+    // Eliteism, copy best from each sufficiently large species
+    if((*s)->population.size() > 5) {
+      population.push_back((*s)->champion->copy());
+      (*s)->portion--;
+    }
     for(int i = 0; i < (*s)->portion; ++i) {
-      Genome *g = (*s)->tournament();
-      // Mutations / Crossover will happen here
-      population.push_back(g);
+      double prob = neat_random::uniform(0, 1);
+      if(prob < neat_options::MUTATION_RATE) {
+        Genome *g = (*s)->tournament();
+
+        // Mutate connection weights
+        prob = neat_random::uniform(0, 1);
+        if(prob < neat_options::CONNECTION_MUTATION_RATE) {
+          prob = neat_random::uniform(0, 1);
+          if(prob < neat_options::PERTURB_MUTATION_RATE) {
+            neat_genetics::perturb_connection(g);
+          } else {
+            neat_genetics::replace_connection(g);
+          }
+        }
+
+
+        // Toggle connection weight
+        prob = neat_random::uniform(0, 1);
+        if(prob < neat_options::TOGGLE_MUTATION_RATE) {
+          neat_genetics::toggle_connection(g);
+        }
+
+        // Structural mutations
+        prob = neat_random::uniform(0, 1);
+        if(prob < neat_options::ADDNODE_MUTATION_RATE) {
+          neat_genetics::add_node(g, node_innov, conn_innov);
+        }
+
+        prob = neat_random::uniform(0, 1);
+        if(prob < neat_options::ADDCONN_MUTATION_RATE) {
+          neat_genetics::add_connection(g, conn_innov);
+        }
+
+        // Append the new genome to population
+        population.push_back(g);
+        
+      } else {
+        Genome *g1 = (*s)->tournament();
+        Genome *g2 = (*s)->tournament();
+        Genome *child = neat_genetics::crossover(g1, g2);
+        population.push_back(child);
+        delete g1;
+        delete g2;
+      }
     }
     delete (*s);
   }
 }
+

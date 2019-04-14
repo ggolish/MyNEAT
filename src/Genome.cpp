@@ -33,6 +33,9 @@ Genome::Genome(int ninputs, int noutputs) :
       connections.push_back(new Connection((*in), (*out), i++));
     }
   }
+  for(out = output_nodes.begin(); out != output_nodes.end(); ++out) {
+    connections.push_back(new Connection(nodes.back(), (*out), i++));
+  }
 
 }
 

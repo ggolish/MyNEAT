@@ -6,7 +6,7 @@
 #include "options.h"
 #include "utilities.h"
 
-Species::Species() : fitness(0.0), portion(0.0)
+Species::Species() : fitness(0.0), portion(0.0), champion(NULL)
 {
 }
 
@@ -21,6 +21,8 @@ void Species::append(Genome *g)
 {
   population.push_back(g);
   fitness += g->fitness;
+  if(champion == NULL || g->fitness > champion->fitness)
+    champion = g;
 }
 
 double Species::distance(Genome *g)

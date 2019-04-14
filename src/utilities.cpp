@@ -68,7 +68,7 @@ namespace neat_node {
     std::vector<Connection *>::iterator conn;
     for(conn = node->in_connections.begin(); conn != node->in_connections.end(); ++conn) {
       if((*conn)->from_node->visited == false) 
-        sum += calculate_output((*conn)->from_node);
+        sum += calculate_output((*conn)->from_node) * (*conn)->weight;
       else
         sum += (*conn)->from_node->value * (*conn)->weight;
     }
@@ -94,11 +94,20 @@ namespace neat_connection {
 
 }
 
+namespace neat_genome {
+
+  bool compare(Genome *g1, Genome *g2)
+  {
+    return (g1->fitness < g2->fitness);
+  }
+
+}
+
 namespace neat_math {
 
   // Returns the result of passing x to the sigmoid function
   double activate(double x) {
-    return 1 / (1 + exp(-x));
+    return 1 / (1 + exp(-4.9 * x));
   }
 
 }

@@ -8,7 +8,7 @@ namespace neat_options {
   double MAX_CONNECTION_WEIGHT = 2.0;
 
   // The maximum percentage a connection weight can be perturbed by
-  double PERTURB_MAX = 0.5;
+  double PERTURB_MAX = 0.4;
 
   // The number of time to calculate the outputs for a network, to account
   // for recurrent connections
@@ -22,4 +22,12 @@ namespace neat_options {
 
   // Determines the number of rounds to run a species tournament
   int TOURNAMENT_ROUNDS = 3;
+
+  // Repopulation rates
+  double MUTATION_RATE = 0.85;
+  double CONNECTION_MUTATION_RATE = 0.8;
+  double PERTURB_MUTATION_RATE = 0.9;
+  double TOGGLE_MUTATION_RATE = 0.01;
+  double ADDNODE_MUTATION_RATE = 0.03;
+  double ADDCONN_MUTATION_RATE = 0.05;
 }

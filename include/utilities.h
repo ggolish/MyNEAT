@@ -21,6 +21,10 @@ namespace neat_connection {
   bool compare(Connection *c1, Connection *c2);
 }
 
+namespace neat_genome {
+  bool compare(Genome *g1, Genome *g2);
+}
+
 namespace neat_math {
   double activate(double x);
 }
