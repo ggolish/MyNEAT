@@ -10,6 +10,8 @@
 #define NOUTPUTS 1
 #define THRESHOLD 0.98
 
+bool accepted(double outputs[]);
+
 std::vector<std::vector<double>> inputs_list {
   {0.0, 0.0},
   {0.0, 1.0},
@@ -24,7 +26,8 @@ int main()
   NEAT neat(POPULATION_SIZE, NINPUTS, NOUTPUTS);
   double best_fitness;
   int best_index;
-  for(;;) {
+  int generations = 1;
+  for(;generations++;) {
     std::vector<double> fitnesses;
     best_fitness = 0.0;
     best_index = -1;
@@ -44,14 +47,27 @@ int main()
       fitnesses.push_back(fitness);
     }
     std::cout << best_fitness << " ";
+    double check_outputs[4];
+    int j = 0;
     for(auto inputs = inputs_list.begin(); inputs != inputs_list.end(); ++inputs) {
       auto outputs = neat.feed_forward(best_index, (*inputs));
+      check_outputs[j++] = outputs[0];
       std::cout << outputs[0] << " ";
     }
     std::cout << std::endl;
-    if(best_fitness > (16.0 * THRESHOLD)) break;
+    if(accepted(check_outputs) == true) break;
     neat.repopulate(fitnesses);
   }
 
   std::cout << *neat.population[best_index] << std::endl;
+  std::cout << "Generations: " << generations << std::endl;
 }
+
+bool accepted(double outputs[])
+{
+  if(outputs[0] < 0.5 && outputs[1] > 0.5 && outputs[2] > 0.5 && outputs[3] < 0.5) {
+    return true;
+  } 
+  return false;
+}
+

@@ -8,13 +8,27 @@
 #include "options.h"
 
 NEAT::NEAT(unsigned int population_size, int ninputs, int noutputs) :
-  population_size(population_size)
+  population_size(population_size), ninputs(ninputs), noutputs(noutputs)
 {
   for(unsigned int i = 0; i < population_size; ++i)
     population.push_back(new Genome(ninputs, noutputs));
 
   node_innov = new InnovationMap(ninputs + noutputs + 1);
   conn_innov = new InnovationMap(ninputs * noutputs + noutputs + 1);
+}
+
+NEAT::~NEAT()
+{
+  for(auto g = population.begin(); g != population.end(); ++g) {
+    delete (*g);
+  }
+
+  for(auto s = species_list.begin(); s != species_list.end(); ++s) {
+    delete (*s);
+  }
+
+  delete node_innov;
+  delete conn_innov;
 }
 
 // Feeds inputs to a single network and returns outputs
@@ -46,9 +60,8 @@ std::vector<std::vector<double>> NEAT::feed_forward_all(const std::vector<double
 
 // Splits the current population into species based on the genome
 // distance function
-std::vector<Species *> NEAT::speciate()
+void NEAT::speciate()
 {
-  std::vector<Species *> species_list;
   for(auto g = population.begin(); g != population.end(); ++g) {
     bool new_species = true;
     for(auto s = species_list.begin(); s != species_list.end(); ++s) {
@@ -60,7 +73,7 @@ std::vector<Species *> NEAT::speciate()
       }
     }
     if(new_species == true) {
-      Species *s = new Species();
+      Species *s = new Species((*g));
       s->append((*g));
       species_list.push_back(s);
     }
@@ -71,19 +84,24 @@ std::vector<Species *> NEAT::speciate()
 
   // Calculate total fitness
   double total_fitness = 0.0;
-  for(auto s = species_list.begin(); s != species_list.end(); ++s) {
-    total_fitness += (*s)->get_fitness();
+  for(auto s = species_list.begin(); s != species_list.end();) {
+    if((*s)->population.size() > 0) {
+      if((*s)->portion != -1.0)
+        total_fitness += (*s)->get_fitness();
+      s++;
+    } else {
+      species_list.erase(s);
+    }
   }
 
   // Assign portions of next population to each species
-  double x = 0.0;
-  for(auto s = species_list.begin(); s != species_list.end() - 1; ++s) {
-    (*s)->portion = floor(((*s)->get_fitness() / total_fitness) * population_size);
-    x += (*s)->portion;
+  for(auto s = species_list.begin(); s != species_list.end(); ++s) {
+    if((*s)->portion == -1.0) {
+      (*s)->portion = 0.0;
+    } else {
+      (*s)->portion = ceil(((*s)->get_fitness() / total_fitness) * population_size);
+    }
   }
-  species_list.back()->portion = population_size - x;
-
-  return species_list;
 }
 
 
@@ -100,62 +118,67 @@ void NEAT::repopulate(const std::vector<double> &fitnesses)
   }
 
   // Split the population into species
-  std::vector<Species *> species_list = speciate();
+  speciate();
 
   // Repopulate using the species
   for(auto s = species_list.begin(); s != species_list.end(); ++s) {
     // Eliteism, copy best from each sufficiently large species
-    if((*s)->population.size() > 5) {
+    if((*s)->population.size() > 5 && (*s)->portion != -1) {
       population.push_back((*s)->champion->copy());
       (*s)->portion--;
     }
     for(int i = 0; i < (*s)->portion; ++i) {
       double prob = neat_random::uniform(0, 1);
-      if(prob < neat_options::MUTATION_RATE) {
-        Genome *g = (*s)->tournament();
+      Genome *g = (*s)->tournament();
 
-        // Mutate connection weights
+      // Mutate connection weights
+      prob = neat_random::uniform(0, 1);
+      if(prob < neat_options::CONNECTION_MUTATION_RATE) {
         prob = neat_random::uniform(0, 1);
-        if(prob < neat_options::CONNECTION_MUTATION_RATE) {
-          prob = neat_random::uniform(0, 1);
-          if(prob < neat_options::PERTURB_MUTATION_RATE) {
-            neat_genetics::perturb_connection(g);
-          } else {
-            neat_genetics::replace_connection(g);
-          }
+        if(prob < neat_options::PERTURB_MUTATION_RATE) {
+          neat_genetics::perturb_connection(g);
+        } else {
+          neat_genetics::replace_connection(g);
         }
+      }
 
+      // Toggle connection weight
+      prob = neat_random::uniform(0, 1);
+      if(prob < neat_options::TOGGLE_MUTATION_RATE) {
+        neat_genetics::toggle_connection(g);
+      }
 
-        // Toggle connection weight
-        prob = neat_random::uniform(0, 1);
-        if(prob < neat_options::TOGGLE_MUTATION_RATE) {
-          neat_genetics::toggle_connection(g);
-        }
+      // Structural mutations
+      prob = neat_random::uniform(0, 1);
+      if(prob < neat_options::ADDNODE_MUTATION_RATE) {
+        neat_genetics::add_node(g, node_innov, conn_innov);
+      }
 
-        // Structural mutations
-        prob = neat_random::uniform(0, 1);
-        if(prob < neat_options::ADDNODE_MUTATION_RATE) {
-          neat_genetics::add_node(g, node_innov, conn_innov);
-        }
+      prob = neat_random::uniform(0, 1);
+      if(prob < neat_options::ADDCONN_MUTATION_RATE) {
+        neat_genetics::add_connection(g, conn_innov);
+      }
 
-        prob = neat_random::uniform(0, 1);
-        if(prob < neat_options::ADDCONN_MUTATION_RATE) {
-          neat_genetics::add_connection(g, conn_innov);
-        }
-
-        // Append the new genome to population
-        population.push_back(g);
-        
-      } else {
-        Genome *g1 = (*s)->tournament();
+      prob = neat_random::uniform(0, 1);
+      if(prob > neat_options::MUTATION_RATE) {
         Genome *g2 = (*s)->tournament();
-        Genome *child = neat_genetics::crossover(g1, g2);
+        Genome *child = neat_genetics::crossover(g, g2);
         population.push_back(child);
-        delete g1;
+        delete g;
         delete g2;
+      } else {
+        population.push_back(g);
       }
     }
-    delete (*s);
+  }
+
+  // Fix population size
+  while(population.size() < population_size) {
+    population.push_back(new Genome(ninputs, noutputs));
+  }
+
+  for(auto s = species_list.begin(); s != species_list.end(); ++s) {
+    (*s)->reset();
   }
 }
 

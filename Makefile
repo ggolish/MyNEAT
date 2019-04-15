@@ -16,10 +16,13 @@ OBJS = \
        src/options.cpp \
        src/Species.cpp
 
-all: xor and or
+all: xor and or avg_xor
 
 xor: xor.o $(OBJS:.cpp=.o)
 	$(CC) $(CFLAGS) $^ -o xor
+
+avg_xor: avg_xor.o $(OBJS:.cpp=.o)
+	$(CC) $(CFLAGS) $^ -o avg_xor
 
 and: and.o $(OBJS:.cpp=.o)
 	$(CC) $(CFLAGS) $^ -o and
@@ -31,6 +34,8 @@ run: $(TARGET)
 	./$(TARGET)
 
 xor.o: xor.cpp include/NEAT.h
+
+avg_xor.o: avg_xor.cpp include/NEAT.h
 
 or.o: or.cpp include/NEAT.h
 
@@ -54,5 +59,5 @@ Species.o: src/Species.cpp include/Species.h
 
 clean:
 	rm -f *.o
-	rm -f xor and or
+	rm -f xor and or avg_xor
 	rm -f src/*.o

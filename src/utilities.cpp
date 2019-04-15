@@ -166,10 +166,12 @@ namespace neat_genetics {
   // Mutates a genome by perturbing its connection weights
   void perturb_connection(Genome *g)
   {
-    int i = neat_random::randint(0, g->connections.size() - 1);
-    Connection *c = g->connections[i];
-    double delta = c->weight * neat_random::uniform(-neat_options::PERTURB_MAX, neat_options::PERTURB_MAX);
-    c->weight += delta;
+    for(unsigned int i = 0; i != g->connections.size(); ++i) {
+      Connection *c = g->connections[i];
+      double delta = c->weight * neat_random::uniform(-neat_options::PERTURB_MAX, neat_options::PERTURB_MAX);
+      c->weight += delta;
+      c->weight = std::min(std::max(-8.0, c->weight), 8.0);
+    }
   }
 
   // Mutates a genome by replacing a connection weight with a random value

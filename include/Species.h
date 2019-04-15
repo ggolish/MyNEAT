@@ -12,12 +12,16 @@ class Species
     double fitness;
 
   public:
+    Genome *rep;
     std::vector<Genome *> population;
     double portion;
     Genome *champion;
+    double best_fitness;
+    int unimprovement_counter;
 
-    Species();
+    Species(Genome *rep);
     ~Species();
+    void reset();
     void append(Genome *g);
     double distance(Genome *g);
     double get_fitness() const;

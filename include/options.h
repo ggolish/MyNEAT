@@ -32,6 +32,11 @@ namespace neat_options {
   extern double TOGGLE_MUTATION_RATE;
   extern double ADDNODE_MUTATION_RATE;
   extern double ADDCONN_MUTATION_RATE;
+  extern double ANOMOLY_RATE;
+
+  // The number of rounds a species has to improve before it is no longer
+  // aloud to reproduce
+  extern int UNIMPROVEMENT_LIMIT;
 }
 
 #endif
