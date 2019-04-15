@@ -7,7 +7,6 @@ CC = g++
 	$(CC) -c $(CFLAGS) $*.cpp -o $*.o
 
 OBJS = \
-       main.cpp \
        src/Genome.cpp \
        src/Connection.cpp \
        src/Node.cpp \
@@ -17,17 +16,25 @@ OBJS = \
        src/options.cpp \
        src/Species.cpp
 
-TARGET = test
+all: xor and or
 
-default: $(TARGET)
+xor: xor.o $(OBJS:.cpp=.o)
+	$(CC) $(CFLAGS) $^ -o xor
 
-$(TARGET): $(OBJS:.cpp=.o)
-	$(CC) $(CFLAGS) $^ -o $(TARGET)
+and: and.o $(OBJS:.cpp=.o)
+	$(CC) $(CFLAGS) $^ -o and
+
+or: or.o $(OBJS:.cpp=.o)
+	$(CC) $(CFLAGS) $^ -o or
 
 run: $(TARGET)
 	./$(TARGET)
 
-main.o: main.cpp include/NEAT.h
+xor.o: xor.cpp include/NEAT.h
+
+or.o: or.cpp include/NEAT.h
+
+and.o: and.cpp include/NEAT.h
 
 utilities.o: src/utilities.cpp include/utilities.h
 
@@ -46,6 +53,6 @@ options.o: src/options.cpp include/options.h
 Species.o: src/Species.cpp include/Species.h
 
 clean:
-	rm -f main.o
+	rm -f *.o
+	rm -f xor and or
 	rm -f src/*.o
-	rm -f $(TARGET)
