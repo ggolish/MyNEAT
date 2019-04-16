@@ -16,6 +16,12 @@ OBJS = \
        src/options.cpp \
        src/Species.cpp
 
+default: neat-extension
+
+neat-extension:
+	swig -python -c++ neat.i
+	python3 setup.py build_ext --inplace
+
 tests: xor and or avg_xor
 
 xor: tests/xor.o $(OBJS:.cpp=.o)
@@ -61,3 +67,4 @@ clean:
 	rm -f *.o
 	rm -f xor and or avg_xor
 	rm -f src/*.o
+	rm -rf neat.py neat_wrap.cxx *.so build __pycache__
