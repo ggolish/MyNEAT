@@ -16,30 +16,30 @@ OBJS = \
        src/options.cpp \
        src/Species.cpp
 
-all: xor and or avg_xor
+tests: xor and or avg_xor
 
-xor: xor.o $(OBJS:.cpp=.o)
+xor: tests/xor.o $(OBJS:.cpp=.o)
 	$(CC) $(CFLAGS) $^ -o xor
 
-avg_xor: avg_xor.o $(OBJS:.cpp=.o)
+avg_xor: tests/avg_xor.o $(OBJS:.cpp=.o)
 	$(CC) $(CFLAGS) $^ -o avg_xor
 
-and: and.o $(OBJS:.cpp=.o)
+and: tests/and.o $(OBJS:.cpp=.o)
 	$(CC) $(CFLAGS) $^ -o and
 
-or: or.o $(OBJS:.cpp=.o)
+or: tests/or.o $(OBJS:.cpp=.o)
 	$(CC) $(CFLAGS) $^ -o or
 
 run: $(TARGET)
 	./$(TARGET)
 
-xor.o: xor.cpp include/NEAT.h
+xor.o: tests/xor.cpp include/NEAT.h
 
-avg_xor.o: avg_xor.cpp include/NEAT.h
+avg_xor.o: tests/avg_xor.cpp include/NEAT.h
 
-or.o: or.cpp include/NEAT.h
+or.o: tests/or.cpp include/NEAT.h
 
-and.o: and.cpp include/NEAT.h
+and.o: tests/and.cpp include/NEAT.h
 
 utilities.o: src/utilities.cpp include/utilities.h
 
