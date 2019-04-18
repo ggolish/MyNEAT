@@ -12,7 +12,7 @@ class NEAT():
         inputs_vector = neat_backend.DoubleVector(len(inputs))
         for i in range(len(inputs)):
             inputs_vector[i] = inputs[i]
-        output = self.neat.feed_forward(index, inputs_vector)
+        output = self.neat.feed_forward(int(index), inputs_vector)
         return output[0] if self.noutputs == 1 else output
 
     def feed_forward_all(self, inputs):
@@ -30,7 +30,7 @@ class NEAT():
             outputs_list = [self.feed_forward_all(inputs) for inputs in inputs_list]
             return tuple(zip(*outputs_list))
         else:
-            return tuple(self.feed_forward(int(index), inputs) for inputs in inputs_list)
+            return tuple(self.feed_forward(index, inputs) for inputs in inputs_list)
 
     def repopulate(self, fitnesses):
         fitnesses_vector = neat_backend.DoubleVector(len(fitnesses))

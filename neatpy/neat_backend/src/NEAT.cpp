@@ -37,7 +37,7 @@ std::vector<double> NEAT::feed_forward(unsigned int index, const std::vector<dou
   std::vector<double> outputs;
   
   if(index >= population.size()) {
-    std::fprintf(stderr, "Error: Invalid population index: %u\n", index);
+    std::fprintf(stderr, "Error: Invalid population index: %u (%u)\n", index, population.size());
     return outputs;
   }
 
