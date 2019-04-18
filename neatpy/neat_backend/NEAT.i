@@ -1,4 +1,4 @@
-%module neat
+%module NEAT
 
 %{
 #include "include/NEAT.h"

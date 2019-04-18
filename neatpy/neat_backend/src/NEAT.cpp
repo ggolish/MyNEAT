@@ -36,7 +36,7 @@ std::vector<double> NEAT::feed_forward(unsigned int index, const std::vector<dou
 {
   std::vector<double> outputs;
   
-  if(index >= population_size) {
+  if(index >= population.size()) {
     std::fprintf(stderr, "Error: Invalid population index: %u\n", index);
     return outputs;
   }
@@ -108,7 +108,7 @@ void NEAT::speciate()
 void NEAT::repopulate(const std::vector<double> &fitnesses)
 {
   // Set the fitness for each genome
-  if(fitnesses.size() != population_size) {
+  if(fitnesses.size() != population.size()) {
     std::cerr << "Error: Invalid fitness array size." << std::endl;
     return;
   }

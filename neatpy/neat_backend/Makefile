@@ -19,7 +19,7 @@ OBJS = \
 default: neat-extension
 
 neat-extension:
-	swig -python -c++ neat.i
+	swig -python -c++ neat_backend.i
 	python3 setup.py build_ext --inplace
 
 tests: xor and or avg_xor

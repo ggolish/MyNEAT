@@ -2,10 +2,10 @@ from distutils.core import setup, Extension
 
 
 neat_module = Extension(
-    '_neat',
+    '_neat_backend',
     include_dirs=["./include"],
     sources=[
-        './neat_wrap.cxx', 
+        './neat_backend_wrap.cxx', 
         'src/NEAT.cpp',
         'src/options.cpp',
         'src/utilities.cpp',
@@ -18,10 +18,10 @@ neat_module = Extension(
 )
 
 setup (
-    name = 'neat',
+    name = 'neat_backend',
     version = '1.0',
     author = "Gage Golish",
     description = """An original implementation of NEAT.""",
     ext_modules = [neat_module],
-    py_modules = ["neat"],
+    py_modules = ["neat_backend"],
 )
