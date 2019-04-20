@@ -22,6 +22,7 @@ class NEAT {
     std::vector<std::vector<double>> feed_forward_all(const std::vector<double> &inputs);
     void speciate();
     void repopulate(const std::vector<double> &fitnesses);
+    Genome *getGenome(int index);
 };
 
 #endif

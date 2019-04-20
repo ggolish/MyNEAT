@@ -118,3 +118,8 @@ std::ostream &operator<<(std::ostream &os, const Genome &g)
 
     return os;
 }
+
+void Genome::summary()
+{
+  std::cout << *this << std::endl;
+}

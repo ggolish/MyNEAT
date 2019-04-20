@@ -182,3 +182,12 @@ void NEAT::repopulate(const std::vector<double> &fitnesses)
   }
 }
 
+Genome *NEAT::getGenome(int index)
+{
+  if(index >= population.size()) {
+    std::cerr << "Error: Invalid population index " << index << " (" << population.size() << ")" << std::endl;
+    return NULL;
+  }
+
+  return population[index];
+}

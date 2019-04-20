@@ -29,6 +29,7 @@ class Genome {
   std::vector<double> feed_forward(const std::vector<double> &inputs);
   // Outputs a genome, for debugging purposes
   friend std::ostream &operator<<(std::ostream &os, const Genome &g);
+  void summary();
 };
 
 #endif

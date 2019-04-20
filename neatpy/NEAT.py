@@ -1,4 +1,5 @@
 from . import neat_backend
+from .genome import Genome
 
 class NEAT():
 
@@ -37,4 +38,8 @@ class NEAT():
         for i in range(len(fitnesses)):
             fitnesses_vector[i] = fitnesses[i]
         self.neat.repopulate(fitnesses_vector)
+
+    def getGenome(self, index):
+        g = self.neat.getGenome(int(index))
+        return Genome(genome=g)
 

@@ -67,4 +67,4 @@ clean:
 	rm -f *.o
 	rm -f xor and or avg_xor
 	rm -f src/*.o
-	rm -rf neat.py neat_wrap.cxx *.so build __pycache__
+	rm -rf neat_backend.py neat_backend_wrap.cxx *.so build __pycache__

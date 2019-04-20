@@ -31,6 +31,8 @@ class XORVisualization():
                 self.update()
                 self.draw()
                 self.neat.repopulate(self.fitnesses)
+        g = self.neat.getGenome(self.best)
+        g.summary()
         pygame.display.quit()
 
     def process_input(self):
