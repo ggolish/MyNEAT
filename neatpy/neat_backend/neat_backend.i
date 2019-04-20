@@ -1,10 +1,13 @@
 %module neat_backend
 
 %{
+#include "include/Node.h"
+#include "include/Connection.h"
 #include "include/Genome.h"
 #include "include/NEAT.h"
 %}
 
+%include "std_string.i"
 %include "std_vector.i"
 
 namespace std {
@@ -15,6 +18,8 @@ namespace std {
     %template(DoubleDoubleVector) vector<vector<double>>;
 }
 
+%include "include/Node.h"
+%include "include/Connection.h"
 %include "include/Genome.h"
 %include "include/NEAT.h"
 

@@ -1,4 +1,4 @@
-from neatpy import NEAT
+from neatpy import NEAT, visualize
 import numpy as np
 import pygame
 import sys
@@ -31,8 +31,8 @@ class XORVisualization():
                 self.update()
                 self.draw()
                 self.neat.repopulate(self.fitnesses)
-        g = self.neat.getGenome(self.best)
-        g.summary()
+        visualize.display_genome(self.neat[self.best])
+        self.neat[self.best].summary()
         pygame.display.quit()
 
     def process_input(self):

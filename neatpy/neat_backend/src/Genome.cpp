@@ -53,6 +53,26 @@ Genome::~Genome()
   }
 }
 
+Connection *Genome::get_connection(int index)
+{
+  if(index >= connections.size()) {
+    std::cerr << "Error: Invalid connection index " << index << " (" << connections.size() << ")" << std::endl;
+    return NULL;
+  }
+
+  return connections[index];
+}
+
+Node *Genome::get_node(int index)
+{
+  if(index >= nodes.size()) {
+    std::cerr << "Error: Invalid node index " << index << " (" << nodes.size() << ")" << std::endl;
+    return NULL;
+  }
+
+  return nodes[index];
+}
+
 Genome *Genome::copy()
 {
   Genome *new_g = new Genome();

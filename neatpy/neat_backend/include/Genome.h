@@ -23,6 +23,9 @@ class Genome {
   ~Genome();
   // Makes an entirely new copy and returns it
   Genome *copy();
+  // Getters
+  Connection *get_connection(int index);
+  Node *get_node(int index);
 
   // Feeds a list of inputs forward through the network and returns
   // the result

@@ -9,6 +9,12 @@ class NEAT():
         self.noutputs = noutputs
         self.neat = neat_backend.NEAT(population_size, ninputs, noutputs)
 
+    def __getitem__(self, index):
+        return self.neat.getGenome(int(index))
+
+    def __len__(self):
+        return len(self.neat.population)
+
     def feed_forward(self, index, inputs):
         inputs_vector = neat_backend.DoubleVector(len(inputs))
         for i in range(len(inputs)):
@@ -38,8 +44,4 @@ class NEAT():
         for i in range(len(fitnesses)):
             fitnesses_vector[i] = fitnesses[i]
         self.neat.repopulate(fitnesses_vector)
-
-    def getGenome(self, index):
-        g = self.neat.getGenome(int(index))
-        return Genome(genome=g)
 
