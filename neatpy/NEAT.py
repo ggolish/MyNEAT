@@ -1,5 +1,4 @@
 from . import neat_backend
-from .genome import Genome
 
 class NEAT():
 

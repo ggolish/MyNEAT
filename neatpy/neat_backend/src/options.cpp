@@ -1,14 +1,16 @@
 
 #include "options.h"
 
+#include <cmath>
+
 namespace neat_options {
 
   // The minimum and maximum possible weights for a connection
-  double MIN_CONNECTION_WEIGHT = -2.0;
-  double MAX_CONNECTION_WEIGHT = 2.0;
+  double MIN_CONNECTION_WEIGHT = -4.0;
+  double MAX_CONNECTION_WEIGHT = 4.0;
 
   // The maximum percentage a connection weight can be perturbed by
-  double PERTURB_MAX = 4.0;
+  double PERTURB_MAX = (std::abs(MIN_CONNECTION_WEIGHT) + std::abs(MAX_CONNECTION_WEIGHT)) / 2.0;
 
   // The number of time to calculate the outputs for a network, to account
   // for recurrent connections

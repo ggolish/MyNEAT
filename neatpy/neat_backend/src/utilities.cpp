@@ -67,10 +67,12 @@ namespace neat_node {
     double sum = 0.0;
     std::vector<Connection *>::iterator conn;
     for(conn = node->in_connections.begin(); conn != node->in_connections.end(); ++conn) {
-      if((*conn)->from_node->visited == false) 
-        sum += calculate_output((*conn)->from_node) * (*conn)->weight;
-      else
-        sum += (*conn)->from_node->value * (*conn)->weight;
+      if((*conn)->disabled == false) {
+        if((*conn)->from_node->visited == false) 
+          sum += calculate_output((*conn)->from_node) * (*conn)->weight;
+        else
+          sum += (*conn)->from_node->value * (*conn)->weight;
+      }
     }
 
     // Activate the value and return
@@ -168,9 +170,9 @@ namespace neat_genetics {
   {
     for(unsigned int i = 0; i != g->connections.size(); ++i) {
       Connection *c = g->connections[i];
-      double delta = c->weight * neat_random::uniform(-neat_options::PERTURB_MAX, neat_options::PERTURB_MAX);
+      double delta = neat_random::uniform(-neat_options::PERTURB_MAX, neat_options::PERTURB_MAX);
       c->weight += delta;
-      c->weight = std::min(std::max(-8.0, c->weight), 8.0);
+      c->weight = std::min(std::max(neat_options::MIN_CONNECTION_WEIGHT, c->weight), neat_options::MAX_CONNECTION_WEIGHT);
     }
   }
 

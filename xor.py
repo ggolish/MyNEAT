@@ -1,73 +1,47 @@
 from neatpy import NEAT, visualize
 import numpy as np
-import pygame
-import sys
 import random
 
 xor_inputs = [[0, 0], [0, 1], [1, 0], [1, 1]]
 xor_outputs = np.array([0, 1, 1, 0])
 
+def evaluate_outputs(outputs):
+    x = np.abs(outputs - xor_outputs)
+    return (np.sum(x < 0.5) == 4)
 
-class XORVisualization():
+def randomize_xor():
+    global xor_inputs, xor_outputs
+    li = list(zip(xor_inputs, xor_outputs.tolist()))
+    random.shuffle(li)
+    xor_inputs, xor_outputs = zip(*li)
+    xor_outputs = np.array(xor_outputs)
 
-    def __init__(self):
-        pygame.display.init()
-        self.width = 800
-        self.height = 600
-        self.window = pygame.display.set_mode((self.width, self.height))
-        self.finished = False
-        self.res = 40
-        self.cols = self.width // self.res
-        self.rows = self.height // self.res
-        self.neat = NEAT(150, 2, 1)
-        self.best = -1
-        self.fitnesses = []
-        self.best_found = False
-        
-    def mainloop(self):
-        while not self.finished:
-            self.process_input()
-            if not self.best_found:
-                self.update()
-                self.draw()
-                self.neat.repopulate(self.fitnesses)
-        visualize.display_genome(self.neat[self.best])
-        self.neat[self.best].summary()
-        pygame.display.quit()
-
-    def process_input(self):
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                self.finished = True
-
-    def update(self):
-        global xor_inputs, xor_outputs
-        outputs = np.array(self.neat.feed_forward_list(xor_inputs))
-        self.fitnesses = np.square(4.0 - np.sum(np.abs(outputs - xor_outputs), axis=1))
-        self.best = np.argmax(self.fitnesses)
-        if self.fitnesses[self.best] > 15.0:
-            self.res = 2
-            self.cols = self.width // self.res
-            self.rows = self.height // self.res
-            self.best_found = True
-        print(self.fitnesses[self.best])
-
-    def draw(self):
-        self.window.fill((0, 0, 0))
-
-        for c in range(self.cols):
-            for r in range(self.rows):
-                x = int(self.neat.feed_forward(self.best, [c / self.cols, r / self.cols]) * 255)
-                color = [x] * 3
-                dims = (c * self.res, r * self.res, self.res, self.res)
-                pygame.draw.rect(self.window, color, dims)
-
-        pygame.display.flip()
-
+def xor_trained_neat():
+    neat = NEAT(150, 2, 1)
+    best = None
+    fitnesses = None
+    generation = 1
+    while True:
+        outputs = np.array(neat.feed_forward_list(xor_inputs))
+        fitnesses = np.square(4.0 - np.sum(np.abs(outputs - xor_outputs), axis=1))
+        best = np.argmax(fitnesses)
+        if evaluate_outputs(outputs[best]):
+            break
+        neat.repopulate(fitnesses)
+        randomize_xor()
+        generation += 1
+    return neat, generation, best, fitnesses[best]
 
 if __name__ == "__main__":
-    
-    viz = XORVisualization()
-    viz.mainloop()
 
+    neat, generation, best, fitness = xor_trained_neat()
 
+    print("Generation: \n{}\n".format(generation))
+    print("Fitness: \n{}\n".format(fitness))
+    print("Actual Values:")
+    for x, y in zip(xor_inputs, neat.feed_forward_list(xor_inputs, index=best)):
+        print("{} ^ {} = {:.02f}".format(x[0], x[1], y))
+    print("\nSummary:")
+    neat[best].summary()
+    visualize.genome_to_png(neat[best], "xor-result", caption="Generation {}".format(generation))
+         
