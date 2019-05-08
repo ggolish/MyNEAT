@@ -1,6 +1,8 @@
 from neatpy import NEAT, visualize
 import numpy as np
 import pygame
+import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
 import sys
 import random
 
@@ -25,14 +27,19 @@ class XORVisualization():
         self.best_found = False
         
     def mainloop(self):
+        generation = 1
         while not self.finished:
             self.process_input()
             if not self.best_found:
                 self.update()
                 self.draw()
                 self.neat.repopulate(self.fitnesses)
-        visualize.display_genome(self.neat[self.best])
+                generation += 1
         self.neat[self.best].summary()
+        visualize.genome_to_png(self.neat[self.best], "xor-result", caption="Generation {}".format(generation))
+        img = mpimg.imread("xor-result.png")
+        plt.imshow(img)
+        plt.show()
         pygame.display.quit()
 
     def process_input(self):
@@ -42,6 +49,10 @@ class XORVisualization():
 
     def update(self):
         global xor_inputs, xor_outputs
+        li = list(zip(xor_inputs, xor_outputs))
+        random.shuffle(li)
+        xor_inputs, xor_outputs = zip(*li)
+        xor_outputs = np.array(xor_outputs)
         outputs = np.array(self.neat.feed_forward_list(xor_inputs))
         self.fitnesses = np.square(4.0 - np.sum(np.abs(outputs - xor_outputs), axis=1))
         self.best = np.argmax(self.fitnesses)
@@ -50,12 +61,13 @@ class XORVisualization():
             self.cols = self.width // self.res
             self.rows = self.height // self.res
             self.best_found = True
+            self.finished = True
         print(self.fitnesses[self.best])
 
     def evaluate_outputs(self, outputs):
-        if outputs[0] < 0.5 and outputs[1] > 0.5 and outputs[2] > 0.5 and outputs[3] < 0.5:
-            return True
-        return False
+        global xor_outputs
+        x = np.abs(outputs - xor_outputs)
+        return (np.sum(x < 0.5) == 4)
 
     def draw(self):
         self.window.fill((0, 0, 0))
